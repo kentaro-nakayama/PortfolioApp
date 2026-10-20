@@ -31,6 +31,7 @@ GitHub APIから取得したリポジトリ情報をキャッシュするテー�
 
 - forkリポジトリ・privateリポジトリ・internalリポジトリは`github:sync`実行時点でAPIレスポンスの`fork` / `private` / `visibility`フラグにより除外され、そもそも保存されない。
 - GitHubのプロフィールREADMEリポジトリ(リポジトリ名が`GITHUB_USERNAME`と一致するもの。例: `kentaro-nakayama/kentaro-nakayama`)は自己紹介用でありプロジェクトではないため除外する。自己紹介はAboutページが担う。
+- `GITHUB_EXCLUDED_REPOSITORIES`(カンマ区切り・大文字小文字を区別しない)に列挙したリポジトリ名も除外する。本サイト自身のリポジトリ(`PortfolioApp`)が該当し、自分自身をプロジェクトとして一覧に載せる不自然さを避けるため、Aboutページからのリンクで代替する。
 - 同期時にAPIレスポンスへ含まれなくなったリポジトリ(public→privateへの変更、リポジトリ削除、fork化など)はDBから物理削除される。これにより非公開化したリポジトリが画面に残り続けることはない。
 - 認証・管理画面を持たないため、他にユーザー入力由来のテーブルは存在しない。
 
@@ -81,15 +82,16 @@ GitHub APIから取得したリポジトリ情報をキャッシュするテー�
   - リポジトリ名・説明
   - 言語・star数・fork数・GitHubへの外部リンク
   - topicsバッジ一覧(存在する場合)
-  - スクリーンショット画像(`screenshot_url`が存在する場合のみ)
   - README本文を`App\Services\GitHub\ReadmeRenderer::toHtml()`でHTML変換して表示(README無し時はその旨を表示)。
     README内の相対パス画像・リンクは`GithubRawUrlResolver`でGitHub上の絶対URLへ解決する
+  - `screenshot_url`はREADME先頭画像から抽出した値であり、詳細ページではREADME本文内に同じ画像が現れるため表示しない。
+    サムネイルとして使うのはホーム(`/`)と一覧(`/projects`)のカードのみ。
 
 ### 4. About (`/about`)
 
 - **目的**: 自己紹介・スキル・経歴を掲載する静的ページ
 - **データ取得**: なし(静的Blade view)
-- **表示内容**: 自己紹介、これまでの経歴、エンジニアを目指したきっかけ、スキル(主に使用/学習経験あり/触れたことがある/資格)、今後の展望
+- **表示内容**: 自己紹介、これまでの経歴、エンジニアを目指したきっかけ、スキル(主に使用/学習経験あり/触れたことがある/資格)、このサイトについて(本サイト自身のリポジトリへのリンク)、今後の展望
 
 ## バッチ処理
 
@@ -98,6 +100,7 @@ GitHub APIから取得したリポジトリ情報をキャッシュするテー�
     - 使用するエンドポイントは`GET /users/{username}/repos`。この仕様上privateリポジトリは返却されないが、
       多重防御として`fork` / `private` / `visibility`を明示的に検査し、public かつ 非forkのもののみを返す
     - リポジトリ名が`GITHUB_USERNAME`と一致するプロフィールREADMEリポジトリも除外する
+    - `GITHUB_EXCLUDED_REPOSITORIES`に指定されたリポジトリ名(本サイト自身のリポジトリ)も除外する。除外対象はREADMEの取得も行わない
   - 各リポジトリについて`GitHubClient::readme()`でREADMEを取得(除外されたリポジトリのREADMEは取得しない)
   - `Repository::updateOrCreate(['github_id' => ...], [...])`でDBへ反映
   - 今回取得した`github_id`に含まれないレコードを削除し、非公開化・削除済みのリポジトリをDBから除去する
@@ -162,12 +165,14 @@ QUEUE_CONNECTION=database
 
 GITHUB_USERNAME=<GitHubユーザー名>
 GITHUB_TOKEN=<Personal Access Token>
+GITHUB_EXCLUDED_REPOSITORIES=PortfolioApp
 ```
 
 - `APP_KEY`はLaravel Cloudが環境作成時に自動生成する。既存の値を差し替えると既存セッションが復号できなくなるため触らない
 - `APP_DEBUG=false`は必須。スタックトレースに`GITHUB_TOKEN`等が露出するのを防ぐ
 - session / cache / queueはいずれもdatabaseドライバを使用し、必要なテーブル(`sessions`・`cache`・`jobs`)は
   Laravel標準のマイグレーションで作成される
+- `GITHUB_EXCLUDED_REPOSITORIES`は一覧に載せたくないリポジトリ名をカンマ区切りで指定する。未設定なら除外なし
 - `GITHUB_TOKEN`はFine-grained tokenの「Public repositories (read-only)」で足りる。publicリポジトリの情報とREADMEしか
   読まないため追加スコープは不要。未設定でも動作するがGitHub APIのレート制限が60回/時に制限される
 

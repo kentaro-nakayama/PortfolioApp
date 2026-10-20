@@ -15,6 +15,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(GitHubClient::class, fn () => new GitHubClient(
             username: config('services.github.username'),
             token: config('services.github.token'),
+            excludedRepositories: config('services.github.excluded_repositories', []),
         ));
     }
 

@@ -100,18 +100,6 @@ test('the project show page resolves relative readme images to absolute github u
     );
 });
 
-test('the project show page displays the repository screenshot when one was extracted', function () {
-    $repository = Repository::factory()->create([
-        'name' => 'screenshot-project',
-        'screenshot_url' => 'https://raw.githubusercontent.com/octocat/screenshot-project/main/docs/screenshot.png',
-    ]);
-
-    $response = $this->get(route('projects.show', $repository));
-
-    $response->assertOk();
-    $response->assertSee('https://raw.githubusercontent.com/octocat/screenshot-project/main/docs/screenshot.png', false);
-});
-
 test('the project show page shows a fallback message when there is no readme', function () {
     $repository = Repository::factory()->create([
         'name' => 'no-readme-project',
@@ -128,4 +116,11 @@ test('the about page is reachable', function () {
     $response = $this->get(route('about'));
 
     $response->assertOk();
+});
+
+test('the about page links to the source repository of this site', function () {
+    $response = $this->get(route('about'));
+
+    $response->assertOk();
+    $response->assertSee('https://github.com/kentaro-nakayama/PortfolioApp', escape: false);
 });

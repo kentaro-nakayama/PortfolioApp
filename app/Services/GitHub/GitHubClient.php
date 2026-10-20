@@ -9,9 +9,13 @@ class GitHubClient
 {
     private const BASE_URL = 'https://api.github.com';
 
+    /**
+     * @param  array<int, string>  $excludedRepositories  Repository names to keep out of the portfolio.
+     */
     public function __construct(
         private readonly string $username,
         private readonly ?string $token = null,
+        private readonly array $excludedRepositories = [],
     ) {}
 
     /**
@@ -43,7 +47,8 @@ class GitHubClient
         return array_values(array_filter(
             $repositories,
             fn (array $repository) => $this->isPublicSource($repository)
-                && ! $this->isProfileRepository($repository),
+                && ! $this->isProfileRepository($repository)
+                && ! $this->isExcluded($repository),
         ));
     }
 
@@ -57,6 +62,25 @@ class GitHubClient
     private function isProfileRepository(array $repository): bool
     {
         return strcasecmp($repository['name'] ?? '', $this->username) === 0;
+    }
+
+    /**
+     * Whether the repository is explicitly excluded through configuration.
+     *
+     * The portfolio site's own repository is the typical case: listing it among the
+     * projects it renders is redundant, so it is linked from the About page instead.
+     *
+     * @param  array<string, mixed>  $repository
+     */
+    private function isExcluded(array $repository): bool
+    {
+        foreach ($this->excludedRepositories as $excluded) {
+            if (strcasecmp($repository['name'] ?? '', $excluded) === 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

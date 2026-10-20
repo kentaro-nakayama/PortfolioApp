@@ -55,7 +55,7 @@ class SyncGithubRepositories extends Command
 
         if ($removed > 0) {
             $this->warn(sprintf(
-                'Removed %d repositories that are no longer public (made private, deleted, or forked).',
+                'Removed %d repositories that are no longer listed (made private, deleted, forked, or excluded by configuration).',
                 $removed,
             ));
         }

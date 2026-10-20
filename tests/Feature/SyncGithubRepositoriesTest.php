@@ -320,3 +320,95 @@ test('github:sync removes the profile repository if it was stored by an earlier 
 
     expect(Repository::count())->toBe(0);
 });
+
+test('github:sync excludes repositories configured as excluded, ignoring case', function () {
+    config([
+        'services.github.username' => 'kentaro-nakayama',
+        'services.github.token' => null,
+        'services.github.excluded_repositories' => ['portfolioapp'],
+    ]);
+
+    Http::fake([
+        'api.github.com/users/kentaro-nakayama/repos*' => Http::response([
+            [
+                'id' => 1,
+                'name' => 'PortfolioApp',
+                'full_name' => 'kentaro-nakayama/PortfolioApp',
+                'description' => 'This portfolio site itself',
+                'html_url' => 'https://github.com/kentaro-nakayama/PortfolioApp',
+                'language' => 'PHP',
+                'topics' => [],
+                'stargazers_count' => 0,
+                'forks_count' => 0,
+                'default_branch' => 'main',
+                'pushed_at' => '2026-01-01T00:00:00Z',
+                'fork' => false,
+                'private' => false,
+                'visibility' => 'public',
+            ],
+            [
+                'id' => 2,
+                'name' => 'MoneyLog',
+                'full_name' => 'kentaro-nakayama/MoneyLog',
+                'description' => 'A real project',
+                'html_url' => 'https://github.com/kentaro-nakayama/MoneyLog',
+                'language' => 'PHP',
+                'topics' => [],
+                'stargazers_count' => 0,
+                'forks_count' => 0,
+                'default_branch' => 'main',
+                'pushed_at' => '2026-01-01T00:00:00Z',
+                'fork' => false,
+                'private' => false,
+                'visibility' => 'public',
+            ],
+        ], 200),
+        'api.github.com/repos/kentaro-nakayama/MoneyLog/readme' => Http::response('# MoneyLog', 200),
+    ]);
+
+    $this->artisan('github:sync')->assertExitCode(0);
+
+    expect(Repository::pluck('full_name')->all())->toBe(['kentaro-nakayama/MoneyLog']);
+
+    Http::assertNotSent(fn ($request) => str_contains($request->url(), '/repos/kentaro-nakayama/PortfolioApp/readme'));
+});
+
+test('github:sync removes an excluded repository that was stored by an earlier sync', function () {
+    config([
+        'services.github.username' => 'kentaro-nakayama',
+        'services.github.token' => null,
+        'services.github.excluded_repositories' => ['PortfolioApp'],
+    ]);
+
+    Repository::factory()->create([
+        'github_id' => 1,
+        'name' => 'PortfolioApp',
+        'slug' => 'portfolioapp',
+        'full_name' => 'kentaro-nakayama/PortfolioApp',
+    ]);
+
+    Http::fake([
+        'api.github.com/users/kentaro-nakayama/repos*' => Http::response([
+            [
+                'id' => 1,
+                'name' => 'PortfolioApp',
+                'full_name' => 'kentaro-nakayama/PortfolioApp',
+                'description' => 'This portfolio site itself',
+                'html_url' => 'https://github.com/kentaro-nakayama/PortfolioApp',
+                'language' => 'PHP',
+                'topics' => [],
+                'stargazers_count' => 0,
+                'forks_count' => 0,
+                'default_branch' => 'main',
+                'pushed_at' => '2026-01-01T00:00:00Z',
+                'fork' => false,
+                'private' => false,
+                'visibility' => 'public',
+            ],
+        ], 200),
+    ]);
+
+    $this->artisan('github:sync')->assertExitCode(0);
+
+    expect(Repository::count())->toBe(0);
+});

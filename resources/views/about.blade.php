@@ -20,11 +20,8 @@
             </h2>
             <div class="space-y-3">
                 <p>
-                    慶應義塾大学理工学部で、リチウム二次電池のサイクル特性と構成材料について研究しました。
-                </p>
-                <p>
-                    卒業後は家庭の事情で大学院進学を見送り、接客のアルバイトや家庭教師(中高生に英語・数学・物理・化学を指導)を続けてきました。
-                    相手の状況を聞き取り、わかりやすく伝える経験を積めたと思っています。
+                    慶應義塾大学理工学部を卒業後，家庭の事情で大学院進学を見送り、接客のアルバイトや家庭教師(中高生に英語・数学・物理・化学を指導)を続けてきました。
+                    相手の状況を聞き取り、わかりやすく伝える経験を積んできました。
                 </p>
             </div>
         </section>
@@ -39,7 +36,7 @@
                     特に移動手段が限られる地方では、オンライン化をはじめとするIT技術が暮らしを支える力は大きいと考えています。
                 </p>
                 <p>
-                    2025年夏から独学を始め、2026年7月からは鳥取県DX人材育成プログラムでPHP・Laravelを使ったWebアプリ制作やチーム開発を学んでいます。
+                    2025年夏からHTML, CSS, Python, JavaScriptなどを独学を学び始めました。2026年7月からは鳥取県DX人材育成プログラムでPHP・Laravelを使ったWebアプリ制作やチーム開発を学んでいます。
                     自分でコードを書いて基礎を固めるとともに、要件定義から設計を自分で行い、AIを活用して機能を実装していくAI駆動開発にも取り組んでいます。
                 </p>
             </div>
@@ -90,6 +87,20 @@
                     <dd>基本情報技術者試験</dd>
                 </div>
             </dl>
+        </section>
+
+        <section class="mt-12">
+            <h2 class="text-xl font-bold text-gray-900 border-l-4 border-indigo-600 pl-3 mb-4">
+                このサイトについて
+            </h2>
+            <p>
+                このポートフォリオサイト自体もLaravel + Tailwind CSSで制作しています。
+                GitHub REST APIから取得した公開リポジトリの情報をMySQLにキャッシュし、Laravel Schedulerで毎日自動更新しています。
+                ソースコードは
+                <a href="https://github.com/kentaro-nakayama/PortfolioApp" target="_blank" rel="noopener" class="group text-indigo-600 transition-colors duration-150 hover:text-indigo-500">
+                    GitHubで公開しています <span class="inline-block transition-transform duration-150 group-hover:translate-x-1">&rarr;</span>
+                </a>
+            </p>
         </section>
 
         <section class="mt-12">

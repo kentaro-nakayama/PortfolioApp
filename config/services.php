@@ -38,6 +38,13 @@ return [
     'github' => [
         'username' => env('GITHUB_USERNAME'),
         'token' => env('GITHUB_TOKEN'),
+
+        // Repository names that must never appear in the portfolio, such as this
+        // site's own repository. Comma separated, compared case-insensitively.
+        'excluded_repositories' => array_values(array_filter(
+            array_map('trim', explode(',', (string) env('GITHUB_EXCLUDED_REPOSITORIES', ''))),
+            fn (string $name) => $name !== '',
+        )),
     ],
 
 ];
