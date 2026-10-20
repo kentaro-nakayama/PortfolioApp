@@ -24,6 +24,7 @@ class Repository extends Model
         'forks_count',
         'default_branch',
         'readme',
+        'screenshot_url',
         'pushed_at',
         'synced_at',
     ];

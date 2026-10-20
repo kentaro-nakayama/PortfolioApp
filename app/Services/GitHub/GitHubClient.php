@@ -15,7 +15,8 @@ class GitHubClient
     ) {}
 
     /**
-     * Fetch all non-fork repositories owned by the configured user.
+     * Fetch all public, non-fork repositories owned by the configured user,
+     * excluding the GitHub profile README repository.
      *
      * @return array<int, array<string, mixed>>
      */
@@ -41,8 +42,43 @@ class GitHubClient
 
         return array_values(array_filter(
             $repositories,
-            fn (array $repository) => $repository['fork'] === false,
+            fn (array $repository) => $this->isPublicSource($repository)
+                && ! $this->isProfileRepository($repository),
         ));
+    }
+
+    /**
+     * Whether the payload is the user's GitHub profile README repository,
+     * which by convention is named after the account itself and only holds
+     * the self-introduction rendered on the profile page.
+     *
+     * @param  array<string, mixed>  $repository
+     */
+    private function isProfileRepository(array $repository): bool
+    {
+        return strcasecmp($repository['name'] ?? '', $this->username) === 0;
+    }
+
+    /**
+     * Whether a repository payload is a public repository the user owns outright.
+     *
+     * The /users/{username}/repos endpoint only returns public repositories, but the
+     * check is made explicit here so private or internal repositories can never reach
+     * the database if the endpoint or its parameters change.
+     *
+     * @param  array<string, mixed>  $repository
+     */
+    private function isPublicSource(array $repository): bool
+    {
+        if (($repository['fork'] ?? false) !== false) {
+            return false;
+        }
+
+        if (($repository['private'] ?? false) !== false) {
+            return false;
+        }
+
+        return ($repository['visibility'] ?? 'public') === 'public';
     }
 
     /**

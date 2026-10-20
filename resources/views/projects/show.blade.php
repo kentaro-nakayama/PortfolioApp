@@ -3,7 +3,9 @@
 @section('title', $repository->name . ' - ' . config('app.name'))
 
 @section('content')
-    <a href="{{ route('projects.index') }}" class="text-sm text-indigo-600">&larr; Back to projects</a>
+    <a href="{{ route('projects.index') }}" class="group text-sm text-indigo-600 transition-colors duration-150 hover:text-indigo-500">
+        <span class="inline-block transition-transform duration-150 group-hover:-translate-x-1">&larr;</span> Back to projects
+    </a>
 
     <h1 class="mt-4 text-2xl font-bold">{{ $repository->name }}</h1>
     <p class="mt-2 text-gray-600">{{ $repository->description }}</p>
@@ -14,8 +16,8 @@
         @endif
         <span>★ {{ $repository->stargazers_count }}</span>
         <span>⑂ {{ $repository->forks_count }}</span>
-        <a href="{{ $repository->html_url }}" target="_blank" rel="noopener" class="text-indigo-600">
-            View on GitHub &rarr;
+        <a href="{{ $repository->html_url }}" target="_blank" rel="noopener" class="group text-indigo-600 transition-colors duration-150 hover:text-indigo-500">
+            View on GitHub <span class="inline-block transition-transform duration-150 group-hover:translate-x-1">&rarr;</span>
         </a>
     </div>
 
@@ -29,7 +31,7 @@
 
     <article class="prose prose-sm mt-10 max-w-none">
         @if ($repository->readme)
-            {!! \Illuminate\Support\Str::markdown($repository->readme) !!}
+            {!! \App\Services\GitHub\ReadmeRenderer::toHtml($repository->readme, $repository->full_name, $repository->default_branch) !!}
         @else
             <p class="text-gray-500">No README available for this project.</p>
         @endif

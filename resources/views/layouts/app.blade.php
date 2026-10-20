@@ -9,12 +9,13 @@
     <body class="min-h-screen bg-gray-50 text-gray-900 antialiased">
         <div class="mx-auto flex min-h-screen max-w-4xl flex-col px-6">
             <header class="flex items-center justify-between py-8">
-                <a href="{{ route('projects.index') }}" class="text-lg font-semibold">
+                <a href="{{ route('home') }}" class="text-lg font-semibold transition-colors duration-150 hover:text-indigo-600">
                     {{ config('app.name') }}
                 </a>
                 <nav class="flex gap-6 text-sm">
-                    <a href="{{ route('projects.index') }}" class="hover:text-indigo-600">Projects</a>
-                    <a href="{{ route('about') }}" class="hover:text-indigo-600">About</a>
+                    <a href="{{ route('home') }}" class="transition-colors duration-150 hover:text-indigo-600">Home</a>
+                    <a href="{{ route('projects.index') }}" class="transition-colors duration-150 hover:text-indigo-600">Projects</a>
+                    <a href="{{ route('about') }}" class="transition-colors duration-150 hover:text-indigo-600">About</a>
                 </nav>
             </header>
 
