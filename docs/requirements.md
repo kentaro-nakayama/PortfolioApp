@@ -24,6 +24,7 @@ GitHub APIから取得したリポジトリ情報をキャッシュするテー�
 | forks_count | unsigned int, default 0 | fork数 |
 | default_branch | string, default 'main' | デフォルトブランチ名 |
 | readme | longtext, nullable | READMEの生Markdown |
+| screenshot_url | string, nullable | README内の先頭画像から抽出したスクリーンショットURL(`ReadmeScreenshotExtractor`)。相対パスはraw.githubusercontent.comの絶対URLへ解決される |
 | pushed_at | timestamp, nullable | GitHub上の最終push日時 |
 | synced_at | timestamp, nullable | 最後にバッチ同期した日時 |
 | created_at / updated_at | timestamp | Laravel標準タイムスタンプ |
@@ -80,13 +81,15 @@ GitHub APIから取得したリポジトリ情報をキャッシュするテー�
   - リポジトリ名・説明
   - 言語・star数・fork数・GitHubへの外部リンク
   - topicsバッジ一覧(存在する場合)
-  - README本文を`Illuminate\Support\Str::markdown()`でHTML変換して表示(README無し時はその旨を表示)
+  - スクリーンショット画像(`screenshot_url`が存在する場合のみ)
+  - README本文を`App\Services\GitHub\ReadmeRenderer::toHtml()`でHTML変換して表示(README無し時はその旨を表示)。
+    README内の相対パス画像・リンクは`GithubRawUrlResolver`でGitHub上の絶対URLへ解決する
 
 ### 4. About (`/about`)
 
 - **目的**: 自己紹介・スキル・経歴を掲載する静的ページ
 - **データ取得**: なし(静的Blade view)
-- **表示内容**: 現状プレースホルダーテキストのみ。今後、経歴・スキルセットなどの具体的な内容を追記する
+- **表示内容**: 自己紹介、これまでの経歴、エンジニアを目指したきっかけ、スキル(主に使用/学習経験あり/触れたことがある/資格)、今後の展望
 
 ## バッチ処理
 

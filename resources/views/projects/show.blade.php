@@ -29,6 +29,15 @@
         </div>
     @endif
 
+    @if ($repository->screenshot_url)
+        <img
+            src="{{ $repository->screenshot_url }}"
+            alt="{{ $repository->name }} のスクリーンショット"
+            loading="lazy"
+            class="mt-8 w-full rounded-lg border border-gray-200 object-cover"
+        >
+    @endif
+
     <article class="prose prose-sm mt-10 max-w-none">
         @if ($repository->readme)
             {!! \App\Services\GitHub\ReadmeRenderer::toHtml($repository->readme, $repository->full_name, $repository->default_branch) !!}

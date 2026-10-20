@@ -16,7 +16,7 @@ DBテーブル構成・ページ構成・各ページの詳細機能は [docs/re
 
 | 項目 | 選定 |
 |---|---|
-| バックエンド | Laravel (最新安定版, PHP 8.3+) |
+| バックエンド | Laravel (最新安定版, PHP 8.4+) |
 | フロントエンド | Blade + Tailwind CSS |
 | データベース | MySQL |
 | 外部API | GitHub REST API |
