@@ -102,3 +102,87 @@ GitHub APIから取得したリポジトリ情報をキャッシュするテー�
   - `Repository::updateOrCreate(['github_id' => ...], [...])`でDBへ反映
   - 今回取得した`github_id`に含まれないレコードを削除し、非公開化・削除済みのリポジトリをDBから除去する
   - `routes/console.php`で`Schedule::command('github:sync')->daily()`により毎日自動実行
+
+## デプロイ (Laravel Cloud)
+
+ホスティングはLaravel Cloud。GitHub連携による自動デプロイを利用し、`main`へのpushでデプロイされる。
+プロジェクト作成・環境変数・DBアタッチはLaravel Cloudのダッシュボード(cloud.laravel.com)で操作する(CLIは提供されていない)。
+
+### ランタイム
+
+| 項目 | 値 | 根拠 |
+|---|---|---|
+| PHP | 8.4 | `composer.json`の`php: ^8.4` |
+| Node | 24 | `.github/workflows/tests.yml`のCIと揃える |
+
+### データベース
+
+- Laravel CloudのマネージドMySQL 8を作成し、対象environmentにアタッチする
+- `DB_CONNECTION` / `DB_HOST` / `DB_PORT` / `DB_DATABASE` / `DB_USERNAME` / `DB_PASSWORD`はLaravel Cloudが自動注入するため、
+  環境変数として手動設定してはいけない(上書きすると接続できなくなる)
+
+### ビルド / デプロイコマンド
+
+Build commands:
+
+```bash
+composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+npm ci
+npm run build
+```
+
+Deploy commands:
+
+```bash
+php artisan migrate --force
+php artisan optimize
+```
+
+- `php artisan optimize`でconfig/route/viewのキャッシュをまとめて生成する
+- `php artisan storage:link`は不要。アップロードファイルを持たず、スクリーンショットは`raw.githubusercontent.com`の
+  外部URLを`repositories.screenshot_url`に保存して参照するだけのため、永続ストレージを使用しない
+
+### 環境変数
+
+```
+APP_NAME=Portfolio
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://<割り当てられたドメイン>
+APP_LOCALE=ja
+APP_FALLBACK_LOCALE=en
+
+LOG_CHANNEL=stack
+LOG_STACK=single
+LOG_LEVEL=error
+
+SESSION_DRIVER=database
+CACHE_STORE=database
+QUEUE_CONNECTION=database
+
+GITHUB_USERNAME=<GitHubユーザー名>
+GITHUB_TOKEN=<Personal Access Token>
+```
+
+- `APP_KEY`はLaravel Cloudが環境作成時に自動生成する。既存の値を差し替えると既存セッションが復号できなくなるため触らない
+- `APP_DEBUG=false`は必須。スタックトレースに`GITHUB_TOKEN`等が露出するのを防ぐ
+- session / cache / queueはいずれもdatabaseドライバを使用し、必要なテーブル(`sessions`・`cache`・`jobs`)は
+  Laravel標準のマイグレーションで作成される
+- `GITHUB_TOKEN`はFine-grained tokenの「Public repositories (read-only)」で足りる。publicリポジトリの情報とREADMEしか
+  読まないため追加スコープは不要。未設定でも動作するがGitHub APIのレート制限が60回/時に制限される
+
+### スケジューラ
+
+- environmentの設定でSchedulerを有効化する。これにより`routes/console.php`の
+  `Schedule::command('github:sync')->daily()`が毎日実行される
+- キューは使用していないためWorkerは不要
+
+### 初回デプロイ後の手順
+
+デプロイ直後はDBが空で何も表示されないため、ダッシュボードのコマンド実行から一度だけ手動で同期する。
+
+```bash
+php artisan github:sync
+```
+
+その後、`/`・`/projects`(言語/topic絞り込み含む)・`/projects/{repository}`・`/about`の表示を確認する。
