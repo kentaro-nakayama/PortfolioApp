@@ -124,3 +124,20 @@ test('the about page links to the source repository of this site', function () {
     $response->assertOk();
     $response->assertSee('https://github.com/kentaro-nakayama/PortfolioApp', escape: false);
 });
+
+test('the project show page rewrites relative readme links to github', function () {
+    $repository = Repository::factory()->create([
+        'name' => 'relative-link-project',
+        'full_name' => 'octocat/relative-link-project',
+        'default_branch' => 'main',
+        'readme' => "# Relative Link Project\n\n- [要件定義書](docs/requirements.md)",
+    ]);
+
+    $response = $this->get(route('projects.show', $repository));
+
+    $response->assertOk();
+    $response->assertSee(
+        'href="https://github.com/octocat/relative-link-project/blob/main/docs/requirements.md"',
+        false
+    );
+});

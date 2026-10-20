@@ -33,3 +33,51 @@ test('it resolves every image in a readme with multiple screenshots', function (
 test('it returns an empty string when the readme is null', function () {
     expect(ReadmeRenderer::toHtml(null, 'octocat/my-app', 'main'))->toBe('');
 });
+
+test('it rewrites a relative markdown link to the file view on github', function () {
+    $html = ReadmeRenderer::toHtml('[要件定義書](docs/requirements.md)', 'octocat/my-app', 'main');
+
+    expect($html)->toContain('href="https://github.com/octocat/my-app/blob/main/docs/requirements.md"');
+});
+
+test('it keeps the fragment when rewriting a relative link', function () {
+    $html = ReadmeRenderer::toHtml('[テーブル定義](docs/database-design.md#tables)', 'octocat/my-app', 'main');
+
+    expect($html)->toContain('href="https://github.com/octocat/my-app/blob/main/docs/database-design.md#tables"');
+});
+
+test('it leaves absolute links untouched', function () {
+    $html = ReadmeRenderer::toHtml('[Laravel](https://laravel.com/docs)', 'octocat/my-app', 'main');
+
+    expect($html)->toContain('href="https://laravel.com/docs"');
+});
+
+test('it leaves in-page anchor links untouched', function () {
+    $html = ReadmeRenderer::toHtml("## Usage\n\n[Jump to usage](#usage)", 'octocat/my-app', 'main');
+
+    expect($html)->toContain('href="#usage"');
+});
+
+test('it leaves mailto links untouched', function () {
+    $html = ReadmeRenderer::toHtml('[連絡先](mailto:someone@example.com)', 'octocat/my-app', 'main');
+
+    expect($html)->toContain('href="mailto:someone@example.com"');
+});
+
+test('it keeps the leading dot of a dotfile directory when rewriting a link', function () {
+    $html = ReadmeRenderer::toHtml('[CI](.github/workflows/tests.yml)', 'octocat/my-app', 'main');
+
+    expect($html)->toContain('href="https://github.com/octocat/my-app/blob/main/.github/workflows/tests.yml"');
+});
+
+test('it strips only the leading current-directory marker of a relative image path', function () {
+    $html = ReadmeRenderer::toHtml('![Home](./docs/home.png)', 'octocat/my-app', 'main');
+
+    expect($html)->toContain('src="https://raw.githubusercontent.com/octocat/my-app/main/docs/home.png"');
+});
+
+test('it keeps the leading dot of a dotfile directory when rewriting an image', function () {
+    $html = ReadmeRenderer::toHtml('![Badge](.github/assets/badge.png)', 'octocat/my-app', 'main');
+
+    expect($html)->toContain('src="https://raw.githubusercontent.com/octocat/my-app/main/.github/assets/badge.png"');
+});

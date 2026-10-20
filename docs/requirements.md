@@ -83,7 +83,12 @@ GitHub APIから取得したリポジトリ情報をキャッシュするテー�
   - 言語・star数・fork数・GitHubへの外部リンク
   - topicsバッジ一覧(存在する場合)
   - README本文を`App\Services\GitHub\ReadmeRenderer::toHtml()`でHTML変換して表示(README無し時はその旨を表示)。
-    README内の相対パス画像・リンクは`GithubRawUrlResolver`でGitHub上の絶対URLへ解決する
+    README内の相対パスは`GithubRawUrlResolver`でGitHub上の絶対URLへ解決する。解決先は用途で異なる:
+    - 画像(`<img src>`)は`raw.githubusercontent.com`(画像そのものを配信するため)
+    - リンク(`<a href>`)は`https://github.com/{full_name}/blob/{default_branch}/...`
+      (Markdownを生テキストではなくGitHubのレンダリング済みページで開くため)
+    - ページ内アンカー(`#...`)、`mailto:`等のスキーム付きURL、プロトコル相対URL(`//...`)は書き換えない
+    - `.github/workflows/tests.yml`のような先頭ドットを含むパスはドットを保持する
   - `screenshot_url`はREADME先頭画像から抽出した値であり、詳細ページではREADME本文内に同じ画像が現れるため表示しない。
     サムネイルとして使うのはホーム(`/`)と一覧(`/projects`)のカードのみ。
 

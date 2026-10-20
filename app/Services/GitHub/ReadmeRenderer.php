@@ -7,8 +7,10 @@ use Illuminate\Support\Str;
 class ReadmeRenderer
 {
     /**
-     * Render a README's raw Markdown to HTML, rewriting relative image URLs (e.g. `docs/screenshots/foo.png`)
-     * to absolute raw.githubusercontent.com URLs so they actually load outside of GitHub's own UI.
+     * Render a README's raw Markdown to HTML, rewriting the relative URLs it contains so they
+     * still work outside of GitHub's own UI: images (e.g. `docs/screenshots/foo.png`) point at
+     * raw.githubusercontent.com, and links (e.g. `docs/requirements.md`) at GitHub's file view.
+     * Left as-is, both would resolve against this site's URL and 404.
      */
     public static function toHtml(?string $markdown, string $fullName, string $defaultBranch): string
     {
@@ -18,9 +20,15 @@ class ReadmeRenderer
 
         $html = Str::markdown($markdown);
 
-        return preg_replace_callback(
+        $html = preg_replace_callback(
             '/(<img\b[^>]*?\bsrc=["\'])([^"\']+)(["\'][^>]*>)/i',
             fn (array $matches) => $matches[1].GithubRawUrlResolver::resolve($matches[2], $fullName, $defaultBranch).$matches[3],
+            $html
+        );
+
+        return preg_replace_callback(
+            '/(<a\b[^>]*?\bhref=["\'])([^"\']+)(["\'][^>]*>)/i',
+            fn (array $matches) => $matches[1].GithubRawUrlResolver::resolveLink($matches[2], $fullName, $defaultBranch).$matches[3],
             $html
         );
     }
