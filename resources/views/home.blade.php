@@ -8,8 +8,8 @@
             <div>
                 <h1 class="mt-2 text-3xl font-bold sm:text-4xl">中山 健太郎</h1>
                 <p class="mt-4 max-w-2xl text-gray-600">
-                    鳥取県在住、Webエンジニアを目指して学習中です。
-                    PHP / Laravel /TypeScriptを中心に、日々の暮らしを少し便利にするWebアプリをつくっています。
+                    鳥取県在住，Webエンジニアを目指して学習中です．
+                    PHP / Laravel / TypeScriptを中心に，日々の暮らしを便利にするWebアプリをつくっています．
                 </p>
 
                 <div class="mt-6 flex gap-4">
