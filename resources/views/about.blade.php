@@ -7,11 +7,11 @@
 
     <div class="max-w-3xl text-gray-700 leading-loose">
         <p class="text-2xl font-bold text-gray-900 mb-2">
-            はじめまして、<strong class="text-indigo-600">中山健太郎</strong>です。
+            はじめまして，<strong class="text-indigo-600">中山健太郎</strong>です．
         </p>
         <p>
-            埼玉県出身、2026年秋から鳥取県で暮らしています。
-            現在はWebエンジニアとして働くことを目指し、Webアプリケーション開発を学んでいます。
+            埼玉県出身，2026年秋から鳥取県で暮らしています．
+            現在はWebエンジニアとして働くことを目指し，Webアプリケーション開発を学んでいます．
         </p>
 
         <section class="mt-12">
@@ -20,8 +20,8 @@
             </h2>
             <div class="space-y-3">
                 <p>
-                    大学卒業後，家庭の事情で大学院進学を見送り、接客のアルバイトや家庭教師(中高生に英語・数学・物理・化学を指導)を続けてきました。
-                    相手の状況を聞き取り、わかりやすく伝える経験を積んできました。
+                    大学卒業後，家庭の事情で大学院進学を見送り，接客のアルバイトや家庭教師を続けてきました．
+                    相手の状況を聞き取り，わかりやすく伝える経験を積んできました．
                 </p>
             </div>
         </section>
@@ -32,13 +32,13 @@
             </h2>
             <div class="space-y-3">
                 <p>
-                    家族のサポートをする中でオンライン診療などのシステムに助けられ、ITが困っている人の大きな支えになることを実感しました。
-                    特に移動手段が限られる地方では、オンライン化をはじめとするIT技術が暮らしを支える力は大きいと考えています。
+                    家族のサポートをする中でオンライン診療などのシステムに助けられ、ITが困っている人の大きな支えになることを実感し，IT業界に興味を持ちました．
+                    特に移動手段が限られる地方では，オンライン化をはじめとするIT技術が暮らしを支える力は大きいと考えています．
                 </p>
                 <p>
-                    2025年夏からHTML, CSS, Python,
-                    JavaScriptなどを独学を学び始めました。2026年8月からは鳥取県DX人材育成プログラムでPHP・Laravelを使ったWebアプリ制作やチーム開発を学んでいます。
-                    自分でコードを書いて基礎を固めるとともに、要件定義から設計を自分で行い、AIを活用して機能を実装していくAI駆動開発にも取り組んでいます。
+                    それから独学でHTML/CSS，Python，JavaScript，Reactなどを学びはじめ，友人の困りごとを解決するWebアプリを作って実際に使ってもらったことで，身近な人の課題を技術で解決できることに大きなやりがいを感じ，エンジニアを目指すと決めました．
+                    2026年8月からは鳥取県DX人材育成プログラムでPHP・Laravelを使ったWebアプリ制作やチーム開発を学んでいます。
+                    自分でコードを書いて基礎を固めるとともに，要件定義から設計を自分で行い，AIを活用して機能を実装していくAI駆動開発にも取り組んでいます．
                 </p>
             </div>
         </section>
@@ -79,7 +79,7 @@
                             <li class="px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-sm">Heroku</li>
                         </ul>
                         <p class="mt-2 text-sm text-gray-500">
-                            MoneyLog公開時にVPS上でLinux・Nginxの環境を構築。TabiPath・MealMateはVercelで公開。
+                            MoneyLog公開時にVPS上でLinux・Nginxの環境を構築．TabiPath・MealMateはVercelで公開．
                         </p>
                     </dd>
                 </div>
@@ -95,8 +95,8 @@
                 このサイトについて
             </h2>
             <p>
-                このポートフォリオサイト自体もLaravel + Tailwind CSSで制作しています。
-                GitHub REST APIから取得した公開リポジトリの情報をMySQLにキャッシュし、Laravel Schedulerで毎日自動更新しています。
+                このポートフォリオサイト自体もLaravel + Tailwind CSSで制作しています．
+                GitHub REST APIから取得した公開リポジトリの情報をMySQLにキャッシュし，Laravel Schedulerで毎日自動更新しています．
                 ソースコードは
                 <a href="https://github.com/kentaro-nakayama/PortfolioApp" target="_blank" rel="noopener"
                     class="group text-indigo-600 transition-colors duration-150 hover:text-indigo-500">
@@ -111,8 +111,8 @@
                 これから
             </h2>
             <p>
-                鳥取に根ざして、地域の暮らしや仕事を支えるシステムづくりに携わりたいと考えています。
-                まずは確かな基礎を身につけ、チームで信頼されるエンジニアを目指します。
+                鳥取に根ざして，地域の暮らしや仕事を支えるシステムづくりに携わりたいと考えています．
+                まずは確かな基礎を身につけ，クライアントの悩みを的確に解決し，感謝されるエンジニアを目指します．
             </p>
         </section>
     </div>
